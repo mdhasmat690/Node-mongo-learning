@@ -1,0 +1,8 @@
+এই খানে যা যা শিখেছি ==> Asynchrouous explain
+call back hell , Promise , synchrons এর ভিতরে Asynchrouous কাজ করে না
+
+Asynchcronous types 
+              callBack,
+              Promise,
+              asyncAwait
+javascript error
