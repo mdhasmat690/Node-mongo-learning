@@ -1,19 +1,22 @@
 {
-  "name": "coremodule",
+  "name": "jerins_server_side",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "start-dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node": "^18.8.0",
-    "underscore": "^1.13.4"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.19"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.8.1",
+    "mongodb": "^5.7.0"
   }
 }

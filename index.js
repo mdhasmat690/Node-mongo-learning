@@ -1,162 +1,213 @@
-const events = require("events");
-const eventEmitter = new events.EventEmitter();
+const express = require("express");
+const cors = require("cors");
+const dbConnect = require("./utils/dbConnect");
+const router = require("./routes/v1/tools.route");
+const viewCount = require("./middleware/veiwCount");
+const { rateLimit } = require("express-rate-limit");
+const errorHandler = require("./middleware/errorHandler");
+// const { MongoClient, Collection } = require("mongodb");
+// const ObjectId = require("mongodb").ObjectId;
+require("dotenv").config();
 
-//creating an event
-const chitkardbo = () => {
-  console.log("oi beta koi tui ?? ami darai asi !!");
-};
+const app = express();
+const port = process.env.PORT || 5000;
 
-//assign the handlr into an event
-eventEmitter.on("scream", chitkardbo).chitkardbo;
+app.use(cors());
+app.use(express.json());
+app.use(express.static("public"));
+app.set("view engine", "ejs");
 
-//firing the event
-eventEmitter.emit("scream");
+// console.log(uri);
+// app.use(viewCount); // application level middileware
 
-/*
-
------------------------------>>>>>>>>>>module-9
-
-
-const http = require("http");
-const fs = require("fs");
-
-const server = http.createServer((req, res) => {
-  if ((req.url = "/")) {
-    //  fs.readFile("data.txt", (err, data) => {
-    //   if (err) {
-    //     res.write("Failed to read datas");
-    //     res.end();
-    //   } else {
-    //     res.write(data);
-    //     res.end();
-    //   }
-    // }); 
-
-    //   const data = fs.readFileSync("data.txt");
-    // res.write(data);
-    // res.end(); 
-
-    fs.writeFile("data.txt", "ha ha ha ha ha  !!!", (err) => {
-      if (err) {
-        res.write("Data failed to write");
-        res.end();
-      } else {
-        res.write("data written successfully");
-        res.end();
-      }
-    });
-  }
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-//console.log(url);
+app.use(limiter);
 
-const PORT = 5000;
-server.listen(PORT);
-console.log(`server is running at ${PORT}`);
+dbConnect();
+app.use("/api/v1/tools", router);
+async function run() {
+  // try {
+  //   await client.connect();
+  //   const dataBase = client.db("jerinsService");
+  //   const servicesCollection = dataBase.collection("service");
+  //   const blogCollection = dataBase.collection("blog");
+  //   const purchesDataCollection = dataBase.collection("purches");
+  //   const reviewDataCollection = dataBase.collection("reviews");
+  //   const usersCollection = dataBase.collection("users");
+  //   //post api
+  //   app.post("/services", async (req, res) => {
+  //     const service = req.body;
+  //     const result = await servicesCollection.insertOne(service);
+  //     console.log(result);
+  //     res.send(result);
+  //   });
+  //   app.post("/blog", async (req, res) => {
+  //     const service = req.body;
+  //     const result = await blogCollection.insertOne(service);
+  //     console.log(result);
+  //     res.send(result);
+  //   });
+  //   //post review
+  //   app.post("/review", async (req, res) => {
+  //     const product = req.body;
+  //     const result = await reviewDataCollection.insertOne(product);
+  //     res.send(result);
+  //   });
+  //   // purches  post
+  //   app.post("/purches", async (req, res) => {
+  //     const product = req.body;
+  //     const result = await purchesDataCollection.insertOne(product);
+  //     res.send(result);
+  //   });
+  //   //user post
+  //   app.post("/users", async (req, res) => {
+  //     const user = req.body;
+  //     const result = await usersCollection.insertOne(user);
+  //     console.log(result);
+  //     res.json(result);
+  //   });
+  //   //put user
+  //   app.put("/users", async (req, res) => {
+  //     const user = req.body;
+  //     const filter = { email: user.email };
+  //     const options = { upsert: true };
+  //     const updateDoc = { $set: user };
+  //     const result = await usersCollection.updateOne(
+  //       filter,
+  //       updateDoc,
+  //       options
+  //     );
+  //     console.log(result);
+  //     res.json(result);
+  //   });
+  //   //put admin
+  //   app.put("/users/admin", async (req, res) => {
+  //     const user = req.body;
+  //     const filter = { email: user.email };
+  //     const updateDoc = { $set: { role: "admin" } };
+  //     const result = await usersCollection.updateOne(filter, updateDoc);
+  //     console.log(result);
+  //     res.send(result);
+  //   });
+  //   //patch
+  //   app.patch("/purches/:id", async (req, res) => {
+  //     const { id } = req.params;
+  //     const result = await purchesDataCollection.updateOne(
+  //       { _id: ObjectId(id) },
+  //       { $set: { status: "Done" } }
+  //     );
+  //     console.log(result);
+  //     res.send(result);
+  //   });
+  //   //get api
+  //   app.get("/services", async (req, res) => {
+  //     const { limit } = req.query;
+  //     let product = null;
+  //     if (limit) {
+  //       product = servicesCollection.find({}).limit(parseInt(limit, 10));
+  //     } else {
+  //       product = servicesCollection.find({});
+  //     }
+  //     const allproduct = await product.toArray();
+  //     res.send(allproduct);
+  //   });
+  //   //get review
+  //   app.get("/review", async (req, res) => {
+  //     const product = reviewDataCollection.find({});
+  //     const allproduct = await product.toArray();
+  //     res.send(allproduct);
+  //   });
+  //   app.get("/blog", async (req, res) => {
+  //     const blogs = blogCollection.find({});
+  //     const allblogs = await blogs.toArray();
+  //     res.send(allblogs);
+  //   });
+  //   //get single data by id
+  //   app.get("/services/:id", async (req, res) => {
+  //     const id = req.params.id;
+  //     const query = { _id: ObjectId(id) };
+  //     const service = await servicesCollection.findOne(query);
+  //     res.send(service);
+  //   });
+  //   app.get("/blog/:id", async (req, res) => {
+  //     const id = req.params.id;
+  //     const query = { _id: ObjectId(id) };
+  //     const service = await blogCollection.findOne(query);
+  //     res.send(service);
+  //   });
+  //   //get purches
+  //   app.get("/purches", async (req, res) => {
+  //     const product = purchesDataCollection.find({});
+  //     const allproduct = await product.toArray();
+  //     res.send(allproduct);
+  //   });
+  //   //get purchesdata by email id
+  //   app.get("/purches/:email", async (req, res) => {
+  //     const email = req.params.email;
+  //     const query = { email: email };
+  //     const cursor = purchesDataCollection.find(query);
+  //     const purche = await cursor.toArray();
+  //     res.send(purche);
+  //   });
+  //   app.get("/users/:email", async (req, res) => {
+  //     const email = req.params.email;
+  //     const query = { email: email };
+  //     const user = await usersCollection.findOne(query);
+  //     console.log(user);
+  //     let isAdmin = false;
+  //     if (user?.role === "admin") {
+  //       isAdmin = true;
+  //     }
+  //     res.json({ admin: isAdmin });
+  //   });
+  //   //delete post
+  //   app.delete("/services/:id", async (req, res) => {
+  //     const id = req.params.id;
+  //     const query = { _id: ObjectId(id) };
+  //     const result = await servicesCollection.deleteOne(query);
+  //     res.send(result);
+  //   });
+  //   app.delete("/purches/:id", async (req, res) => {
+  //     const id = req.params.id;
+  //     const query = { _id: ObjectId(id) };
+  //     const result = await purchesDataCollection.deleteOne(query);
+  //     console.log(result, "complet");
+  //     res.send(result);
+  //   });
+  // } finally {
+  //   //     // await client.close()
+  // }
+}
 
- */
+run().catch(console.dir);
 
-/* 
-------------------->>>>>>>>>module-8
-
-//Local module
-const other = require("./other");
-
-// console.log(other.substract(2, 4));
-
-
-const http = require("http");
-const url = require("url");
-
-const server = http.createServer((req, res) => {
-  const address_url =
-    "http://localhost:5000/contct?name=hasmat&country=bangladesh";
-  const parse_url = url.parse(address_url, true);
-  const queryObject = parse_url.query;
-  console.log(queryObject);
+app.get("/", (req, res) => {
+  // res.sendFile(__dirname + "/public/test.html");
+  res.render("home.ejs",{
+    id: 2
+  })
 });
 
-//console.log(url);
-
-const PORT = 5000;
-server.listen(PORT);
-console.log(`server is running at ${PORT}`);
-
-//contct?name=hasmat&country=bangladesh
-
-
-
- */
-
-/* 
-module----------7
-//Local module
-const other = require("./other");
-
-// console.log(other.substract(2, 4));
-//core module
-
-var http = require("http");
-
-const server = http.createServer((req, res) => {
-  if (req.url == "/") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.write(JSON.stringify({ curse: "Node mongodb" }));
-    res.end();
-  } else if (req.url == "/contact") {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.write("<p>This is home contact</p>");
-    res.end();
-  } else if (req.url == "/about") {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.write("<p>This is about us</p>");
-    res.end();
-  }
+app.all("*", (req, res) => {
+  res.send("No route found");
 });
 
-const PORT = 5000;
-server.listen(PORT);
-console.log(`server is running at ${PORT}`);
+app.use(errorHandler)
+
+app.listen(port, () => {
+  console.log("Jerins care product server on  port ", port);
+});
 
 
-*/
-
-/* 
-
-Read the instructions given below and try it:
-
-
-
-1 You will have to create a server using core node_modules where there will be a root route (‘/’). 
-
-
-
-2 When a user hits the root route(‘/) with GET request you will have to send an HTML file containing ‘‘Welcome to Full Stack Development “.
-
-
-
-3 You will have to create a file in the root folder of your project called first.txt containing some text.
-
-For example: “ I am a pull stack developer !!! 🤣 ”
-
-
-
- 4 There will be four more routes to handle requests. When a user hits the routes you will have to do the following:
-
-
-
- 1 '/read' - to read the first.txt file from the file system using the core fs module
-
-
-
-2 '/write' - You have to read the text of the first.txt file and write it to the second.txt file.
-
-
-
-3 '/append' - You have to append the text “ No! It will be full not pull ! 😑 ” in the first.txt file.
-
-
-
- 4 '/delete' - You have to delete the second.txt file
-
-*/
+process.on("unhandledRejection",(error)=>{
+  console.log(error.name,error.message);
+  app.close(()=>{
+    process.exit(1)
+  })
+})
