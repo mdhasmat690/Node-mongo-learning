@@ -76,7 +76,7 @@ exports.getProducts = async (req, res, next) => {
 exports.createProduct = async (req, res, next) => {
   try {
     // save or create
-
+    console.log(req.body);
     const result = await createProductService(req.body);
 
     result.logger();
