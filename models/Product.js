@@ -6,7 +6,7 @@ const productSchema = mongoose.Schema(
     name: {
       type: String,
       required: [true, "Please provide a name for this product."],
-      trim: true,
+      trim: true, // age piconer space kete dibe
       unique: [true, "Name must be unique"],
       lowercase: true,
       minLength: [3, "Name must be at least 3 characters."],
@@ -48,22 +48,22 @@ const productSchema = mongoose.Schema(
       },
     ],
 
-    category: {
-      type: String,
-      required: true,
-    },
+    // category: {
+    //   type: String,
+    //   required: true,
+    // },
 
-    brand: {
-      name: {
-        type: String,
-        required: true,
-      },
-      id: {
-        type: ObjectId,
-        ref: "Brand",
-        required: true,
-      },
-    },
+    // brand: {
+    //   name: {
+    //     type: String,
+    //     required: true,
+    //   },
+    //   id: {
+    //     type: ObjectId,
+    //     ref: "Brand", // referance brand model theke asbe
+    //     required: true,
+    //   },
+    // },
   },
   {
     timestamps: true,
@@ -79,6 +79,10 @@ productSchema.pre("save", function (next) {
 
   next();
 });
+
+productSchema.methods.logger = function () {
+  console.log(` Data saved for ${this.name}`);
+};
 
 const Product = mongoose.model("Product", productSchema);
 

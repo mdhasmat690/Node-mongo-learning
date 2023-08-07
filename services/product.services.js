@@ -13,6 +13,7 @@ exports.getProductsService = async (filters, queries) => {
 };
 
 exports.createProductService = async (data) => {
+  console.log(data);
   const product = await Product.create(data);
   return product;
 };
