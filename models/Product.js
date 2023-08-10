@@ -10,7 +10,7 @@ const productSchema = mongoose.Schema(
       unique: [true, "Name must be unique"],
       lowercase: true,
       minLength: [3, "Name must be at least 3 characters."],
-      maxLenght: [100, "Name is too large"],
+      maxLength: [100, "Name is too large"],
     },
     description: {
       type: String,
@@ -48,22 +48,22 @@ const productSchema = mongoose.Schema(
       },
     ],
 
-    // category: {
-    //   type: String,
-    //   required: true,
-    // },
+    category: {
+      type: String, //embed
+      required: true,
+    },
 
-    // brand: {
-    //   name: {
-    //     type: String,
-    //     required: true,
-    //   },
-    //   id: {
-    //     type: ObjectId,
-    //     ref: "Brand", // referance brand model theke asbe
-    //     required: true,
-    //   },
-    // },
+    brand: {
+      name: {
+        type: String,
+        required: true,
+      },
+      id: {
+        type: ObjectId,
+        ref: "Brand", // referance brand model theke asbe
+        required: true,
+      },
+    },
   },
   {
     timestamps: true,

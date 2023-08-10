@@ -89,6 +89,7 @@ const stockSchema = mongoose.Schema(
     },
     store: {
       name: {
+        //embed
         type: String,
         trim: true,
         required: [true, "Please provide a store name"],
@@ -108,6 +109,7 @@ const stockSchema = mongoose.Schema(
         },
       },
       id: {
+        //refference
         type: ObjectId,
         required: true,
         ref: "Store",
